@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package example;
+
+option go_package = "github.com/benjamin-rood/protoc-gen-go-value-slices/examples/gen";
+
+message User {
+  string id = 1;
+  string name = 2;
+  string email = 3;
+}
+
+message Product {
+  string id = 1;
+  string name = 2;
+  double price = 3;
+}
+
+message Order {
+  string id = 1;
+  string user_id = 2;
+  
+  // @valueslice - This will be converted to []Product instead of []*Product
+  repeated Product products = 3;
+  
+  // @nullable=false - This will be converted to []string (already is for primitives)
+  repeated string tags = 4;
+  
+  // This remains []*User (no special comment)
+  repeated User reviewers = 5;
+}
+
+message UserList {
+  // @valueslice
+  repeated User users = 1;
+  
+  int32 total_count = 2;
+  
+  // @nullable=false
+  repeated string search_terms = 3;
+}

@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package test;
+
+option go_package = "github.com/benjamin-rood/protoc-gen-go-value-slices/testdata/gen";
+
+message User {
+  string id = 1;
+  string name = 2;
+}
+
+message Product {
+  string id = 1;
+  string name = 2;
+  double price = 3;
+}
+
+message TestMessage {
+  // @valueslice
+  repeated User users = 1;
+  
+  // @nullable=false
+  repeated Product products = 2;
+  
+  // No annotation - should remain pointer slice
+  repeated User admins = 3;
+  
+  // Primitive types are already value slices
+  repeated string tags = 4;
+}

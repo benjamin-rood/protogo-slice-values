@@ -1,0 +1,14 @@
+# buf.gen.yaml
+version: v1
+plugins:
+  # Use our custom plugin instead of standard go
+  - plugin: go-value-slices  # Your custom plugin
+    out: gen
+    opt:
+      - paths=source_relative
+
+  # gRPC generation still standard
+  - plugin: go-grpc
+    out: gen
+    opt:
+      - paths=source_relative
