@@ -1,4 +1,4 @@
-# protoc-gen-go-value-slices
+# protogo-slice-values
 
 A protoc plugin that converts pointer slices to value slices for fields marked with special comments in your Protocol Buffer files.
 
@@ -63,22 +63,22 @@ type UserList struct {
 ### From Source
 
 ```bash
-go install github.com/benjamin-rood/protoc-gen-go-value-slices/cmd/protoc-gen-go-value-slices@latest
+go install github.com/benjamin-rood/protogo-slice-values/cmd/protoc-gen-go-value-slices@latest
 ```
 
 ### From Repository
 
 ```bash
-git clone https://github.com/benjamin-rood/protoc-gen-go-value-slices.git
-cd protoc-gen-go-value-slices
+git clone https://github.com/benjamin-rood/protogo-slice-values.git
+cd protogo-slice-values
 make install
 ```
 
 ### Manual Build
 
 ```bash
-git clone https://github.com/benjamin-rood/protoc-gen-go-value-slices.git
-cd protoc-gen-go-value-slices
+git clone https://github.com/benjamin-rood/protogo-slice-values.git
+cd protogo-slice-values
 make build
 cp protoc-gen-go-value-slices $GOPATH/bin/  # or somewhere in your PATH
 ```

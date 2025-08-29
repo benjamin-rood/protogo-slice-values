@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/benjamin-rood/protoc-gen-go-value-slices/internal/parser/types"
+	"github.com/benjamin-rood/protogo-slice-values/internal/parser/types"
 	"google.golang.org/protobuf/types/descriptorpb"
 	"google.golang.org/protobuf/types/pluginpb"
 )

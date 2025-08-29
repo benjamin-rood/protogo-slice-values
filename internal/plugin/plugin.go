@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os/exec"
 
-	"github.com/benjamin-rood/protoc-gen-go-value-slices/internal/parser"
-	"github.com/benjamin-rood/protoc-gen-go-value-slices/internal/transform"
+	"github.com/benjamin-rood/protogo-slice-values/internal/parser"
+	"github.com/benjamin-rood/protogo-slice-values/internal/transform"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/pluginpb"
 )

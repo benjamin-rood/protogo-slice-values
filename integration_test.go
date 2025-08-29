@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/benjamin-rood/protoc-gen-go-value-slices/internal/plugin"
+	"github.com/benjamin-rood/protogo-slice-values/internal/plugin"
 	"google.golang.org/protobuf/types/descriptorpb"
 	"google.golang.org/protobuf/types/pluginpb"
 )
