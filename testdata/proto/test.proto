@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package test;
 
-option go_package = "github.com/benjamin-rood/protoc-gen-go-value-slices/testdata/gen";
+option go_package = "github.com/benjamin-rood/protogo-values/testdata/gen";
 
 message User {
   string id = 1;

@@ -1,4 +1,4 @@
 version: v1
-name: buf.build/example/protoc-gen-go-value-slices-example
+name: buf.build/example/protoc-gen-go-values-example
 deps:
   - buf.build/googleapis/googleapis

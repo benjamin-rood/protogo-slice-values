@@ -2,15 +2,15 @@
 
 # Build the plugin
 build:
-	go build -o protoc-gen-go-value-slices ./cmd/protoc-gen-go-value-slices
+	go build -o protoc-gen-go-values ./cmd/protoc-gen-go-values
 
 # Install to GOBIN (or GOPATH/bin)
 install:
-	go install ./cmd/protoc-gen-go-value-slices
+	go install ./cmd/protoc-gen-go-values
 
 # Clean build artifacts
 clean:
-	rm -f protoc-gen-go-value-slices
+	rm -f protoc-gen-go-values
 	rm -rf testdata/gen
 
 # Run all tests

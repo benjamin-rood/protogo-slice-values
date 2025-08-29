@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package test;
+
+import "proto/protogo_values/options.proto";
+
+option go_package = "github.com/benjamin-rood/protogo-values/testdata/gen";
+
+message User {
+  string id = 1;
+  string name = 2;
+}
+
+message Product {
+  string sku = 1;
+  string name = 2;
+  double price = 3;
+}
+
+message TestMessage {
+  // Field with value_slice option - should generate []User
+  repeated User users_with_option = 1 [
+    (protogo_values.value_slice) = true
+  ];
+  
+  // Field with structured field_opts - should generate []Product
+  repeated Product products_with_struct_option = 2 [
+    (protogo_values.field_opts).value_slice = true
+  ];
+  
+  // Field without options - should generate []*User (default behavior)
+  repeated User users_without_option = 3;
+  
+  // Field with value_slice = false - should generate []*Product (explicit default)
+  repeated Product products_explicit_false = 4 [
+    (protogo_values.value_slice) = false
+  ];
+  
+  // Primitive repeated field - should remain []string regardless of option
+  repeated string tags = 5 [
+    (protogo_values.value_slice) = true  // Should be ignored for primitives
+  ];
+  
+  // Non-repeated field with option - should be ignored
+  User single_user = 6 [
+    (protogo_values.value_slice) = true  // Should be ignored for singular fields
+  ];
+}

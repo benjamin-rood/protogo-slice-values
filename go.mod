@@ -1,4 +1,4 @@
-module github.com/benjamin-rood/protogo-slice-values
+module github.com/benjamin-rood/protogo-values
 
 go 1.24.5
 

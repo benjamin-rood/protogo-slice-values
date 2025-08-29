@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-Before installing protoc-gen-go-value-slices, make sure you have:
+Before installing protoc-gen-go-values, make sure you have:
 
 1. **Go 1.19 or later**
    ```bash
@@ -30,24 +30,24 @@ Before installing protoc-gen-go-value-slices, make sure you have:
 ### Method 1: Direct Installation from Source
 
 ```bash
-go install github.com/benjamin-rood/protoc-gen-go-value-slices@latest
+go install github.com/benjamin-rood/protoc-gen-go-values@latest
 ```
 
 ### Method 2: Clone and Build
 
 ```bash
-git clone https://github.com/benjamin-rood/protoc-gen-go-value-slices.git
-cd protoc-gen-go-value-slices
+git clone https://github.com/benjamin-rood/protoc-gen-go-values.git
+cd protoc-gen-go-values
 make dev-setup
 ```
 
 ### Method 3: Manual Build
 
 ```bash
-git clone https://github.com/benjamin-rood/protoc-gen-go-value-slices.git
-cd protoc-gen-go-value-slices
-go build -o protoc-gen-go-value-slices .
-cp protoc-gen-go-value-slices $HOME/go/bin/  # or anywhere in your PATH
+git clone https://github.com/benjamin-rood/protoc-gen-go-values.git
+cd protoc-gen-go-values
+go build -o protoc-gen-go-values .
+cp protoc-gen-go-values $HOME/go/bin/  # or anywhere in your PATH
 ```
 
 ## Verify Installation
@@ -55,7 +55,7 @@ cp protoc-gen-go-value-slices $HOME/go/bin/  # or anywhere in your PATH
 Check that the plugin is correctly installed:
 
 ```bash
-which protoc-gen-go-value-slices
+which protoc-gen-go-values
 ```
 
 Make sure all dependencies are available:
@@ -91,7 +91,7 @@ make check-deps
 
 ### Plugin not found
 - Ensure the binary is in your PATH
-- Check that it's named exactly `protoc-gen-go-value-slices`
+- Check that it's named exactly `protoc-gen-go-values`
 - Verify Go's bin directory is in your PATH: `echo $PATH | grep $(go env GOPATH)/bin`
 
 ### protoc-gen-go not found
@@ -101,7 +101,7 @@ go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 
 ### Permission denied
 ```bash
-chmod +x $(which protoc-gen-go-value-slices)
+chmod +x $(which protoc-gen-go-values)
 ```
 
 For more help, see the README.md or create an issue on GitHub.

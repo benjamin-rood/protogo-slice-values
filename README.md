@@ -1,25 +1,33 @@
-# protogo-slice-values
+# protogo-values
 
-A protoc plugin that converts pointer slices to value slices for fields marked with special comments in your Protocol Buffer files.
+A protoc plugin that converts pointer slices to value slices for fields marked with protobuf field options.
 
 ## Overview
 
-By default, the Go protobuf generator creates pointer slices (`[]*Type`) for repeated message fields to handle potential nil values. This plugin allows you to specify which repeated fields should use value slices (`[]Type`) instead by marking them with special comments.
+By default, the Go protobuf generator creates pointer slices (`[]*Type`) for repeated message fields to handle potential nil values. This plugin allows you to specify which repeated fields should use value slices (`[]Type`) instead using protobuf field options.
 
-## Supported Comments
+## Field Options
 
-Mark fields in your `.proto` files with either:
-- `@nullable=false` - Traditional approach
-- `@valueslice` - Shorter, cleaner syntax
+Import the protogo_values options in your proto files:
+
+```protobuf
+import "proto/protogo_values/options.proto";
+```
+
+Then mark fields with the `value_slice` option:
+
+```protobuf
+repeated User users = 1 [(protogo_values.value_slice) = true];
+```
 
 ## Example Usage
-
-### Proto File
 
 ```protobuf
 syntax = "proto3";
 
 package example;
+
+import "proto/protogo_values/options.proto";
 
 message User {
   string id = 1;
@@ -27,18 +35,23 @@ message User {
 }
 
 message UserList {
-  // @valueslice
-  repeated User users = 1;
+  // Using field option - generates []User
+  repeated User users = 1 [(protogo_values.value_slice) = true];
   
-  // @nullable=false  
-  repeated string tags = 2;
+  // Using structured field option - generates []User  
+  repeated User active_users = 2 [
+    (protogo_values.field_opts).value_slice = true
+  ];
   
-  // This remains a pointer slice []*User
+  // No option - remains []*User (default)
   repeated User admins = 3;
+  
+  // Explicit false - remains []*User
+  repeated User moderators = 4 [(protogo_values.value_slice) = false];
 }
 ```
 
-### Generated Go Code
+## Generated Go Code
 
 Without this plugin:
 ```go
@@ -63,24 +76,24 @@ type UserList struct {
 ### From Source
 
 ```bash
-go install github.com/benjamin-rood/protogo-slice-values/cmd/protoc-gen-go-value-slices@latest
+go install github.com/benjamin-rood/protogo-values/cmd/protoc-gen-go-values@latest
 ```
 
 ### From Repository
 
 ```bash
-git clone https://github.com/benjamin-rood/protogo-slice-values.git
-cd protogo-slice-values
+git clone https://github.com/benjamin-rood/protogo-values.git
+cd protogo-values
 make install
 ```
 
 ### Manual Build
 
 ```bash
-git clone https://github.com/benjamin-rood/protogo-slice-values.git
-cd protogo-slice-values
+git clone https://github.com/benjamin-rood/protogo-values.git
+cd protogo-values
 make build
-cp protoc-gen-go-value-slices $GOPATH/bin/  # or somewhere in your PATH
+cp protoc-gen-go-values $GOPATH/bin/  # or somewhere in your PATH
 ```
 
 ## Usage
@@ -92,7 +105,7 @@ Create a `buf.gen.yaml` file:
 ```yaml
 version: v1
 plugins:
-  - plugin: go-value-slices
+  - plugin: go-values
     out: gen
     opt:
       - paths=source_relative
@@ -111,8 +124,8 @@ buf generate
 
 ```bash
 protoc \
-  --go-value-slices_out=. \
-  --go-value-slices_opt=paths=source_relative \
+  --go-values_out=. \
+  --go-values_opt=paths=source_relative \
   --go-grpc_out=. \
   --go-grpc_opt=paths=source_relative \
   your_proto_file.proto
@@ -122,7 +135,7 @@ protoc \
 
 1. The plugin intercepts the protobuf compilation process
 2. Calls the standard `protoc-gen-go` plugin to generate normal Go code
-3. Parses the proto files for fields marked with `@nullable=false` or `@valueslice`
+3. Parses the proto files for fields marked with protobuf field options
 4. Post-processes the generated Go code to convert marked fields from `[]*Type` to `[]Type`
 5. Updates both field declarations and getter methods
 
@@ -161,7 +174,6 @@ go test -cover ./internal/...
 
 - Only works with repeated message fields
 - Requires `protoc-gen-go` to be available during compilation
-- Comments must be placed directly above the field declaration
 
 ## License
 

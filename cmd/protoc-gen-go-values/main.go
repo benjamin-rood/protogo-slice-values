@@ -1,4 +1,4 @@
-// protoc-gen-go-value-slices - A protoc plugin that converts pointer slices to value slices for fields marked with @nullable=false or @valueslice
+// protoc-gen-go-values - A protoc plugin that converts pointer slices to value slices for fields marked with protobuf field options
 package main
 
 import (
@@ -6,7 +6,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/benjamin-rood/protogo-slice-values/internal/plugin"
+	"github.com/benjamin-rood/protogo-values/internal/plugin"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/pluginpb"
 )
@@ -45,7 +45,7 @@ func run() error {
 	if err != nil {
 		return fmt.Errorf("failed to marshal response: %w", err)
 	}
-	
+
 	if _, err := os.Stdout.Write(output); err != nil {
 		return fmt.Errorf("failed to write output: %w", err)
 	}

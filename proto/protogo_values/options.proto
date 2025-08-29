@@ -1,0 +1,52 @@
+// Copyright 2025 protogo-slice-values contributors
+//
+// Licensed under the MIT License. See LICENSE file in the project root
+// for full license information.
+
+// protogo_values/options.proto defines custom field options for controlling
+// value type generation in the protogo-slice-values plugin.
+syntax = "proto3";
+
+package protogo_values;
+
+import "google/protobuf/descriptor.proto";
+
+option go_package = "github.com/benjamin-rood/protogo-values/proto/protogo_values";
+
+// value_slice controls whether to generate value slices for repeated fields.
+//
+// When set to true on a repeated message field, the generated Go code will
+// use []Type instead of the default []*Type.
+//
+// Example usage:
+//   repeated User users = 1 [(protogo_values.value_slice) = true];
+//
+// This only affects repeated message fields. Repeated primitive fields
+// (string, int32, etc.) already generate value slices by default.
+//
+// Extension number 50001 is used to avoid conflicts with other protobuf
+// extensions. Numbers 50000+ are reserved for private use.
+extend google.protobuf.FieldOptions {
+  bool value_slice = 50001;
+}
+
+// FieldOptions provides structured options for future extensibility.
+// This allows adding new field-level options without defining new extensions.
+//
+// Example usage:
+//   repeated Item items = 2 [(protogo_values.field_opts).value_slice = true];
+message FieldOptions {
+  // value_slice controls value vs pointer slice generation
+  optional bool value_slice = 1;
+  
+  // Future options can be added here without breaking compatibility:
+  // optional bool omit_empty = 2;
+  // optional string validation_rule = 3;
+  // optional bool json_name_override = 4;
+}
+
+// Structured field options extension for future extensibility.
+// Extension number 50002 provides room for growth.
+extend google.protobuf.FieldOptions {
+  optional FieldOptions field_opts = 50002;
+}

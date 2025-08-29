@@ -79,7 +79,7 @@ package protogo;
 
 import "google/protobuf/descriptor.proto";
 
-option go_package = "github.com/benjamin-rood/protogo-slice-values/proto/protogo";
+option go_package = "github.com/benjamin-rood/protogo-values/proto/protogo";
 
 // Primary extension for explicit value slice control
 extend google.protobuf.FieldOptions {

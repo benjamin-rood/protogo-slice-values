@@ -2,15 +2,20 @@ package parser
 
 import (
 	"fmt"
-	"strings"
 
-	"github.com/benjamin-rood/protogo-slice-values/internal/parser/types"
+	"github.com/benjamin-rood/protogo-values/internal/parser/types"
+	"github.com/benjamin-rood/protogo-values/proto/protogo_values"
+	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/descriptorpb"
 	"google.golang.org/protobuf/types/pluginpb"
 )
 
-// FindAnnotatedFields parses proto files and finds fields marked with @nullable=false or @valueslice
+// FindAnnotatedFields parses proto files and finds fields marked with protobuf field options
 func FindAnnotatedFields(req *pluginpb.CodeGeneratorRequest) (*types.AnnotatedFields, error) {
+	if req == nil {
+		return nil, fmt.Errorf("request cannot be nil")
+	}
+	
 	fields := types.NewAnnotatedFields()
 
 	for _, protoFile := range req.ProtoFile {
@@ -23,17 +28,9 @@ func FindAnnotatedFields(req *pluginpb.CodeGeneratorRequest) (*types.AnnotatedFi
 }
 
 func processProtoFile(protoFile *descriptorpb.FileDescriptorProto, fields *types.AnnotatedFields) error {
-	// Build a map of source code locations
-	locationMap := buildLocationMap(protoFile.GetSourceCodeInfo())
-
-	// Process messages with their source locations
-	for msgIdx, message := range protoFile.MessageType {
-		if err := processMessage(
-			message,
-			locationMap,
-			[]int32{4, int32(msgIdx)}, // Path to message
-			fields,
-		); err != nil {
+	// Process messages
+	for _, message := range protoFile.MessageType {
+		if err := processMessage(message, fields); err != nil {
 			return fmt.Errorf("failed to process message %s: %w", message.GetName(), err)
 		}
 	}
@@ -41,54 +38,54 @@ func processProtoFile(protoFile *descriptorpb.FileDescriptorProto, fields *types
 	return nil
 }
 
-func buildLocationMap(sourceInfo *descriptorpb.SourceCodeInfo) map[string]*descriptorpb.SourceCodeInfo_Location {
-	locationMap := make(map[string]*descriptorpb.SourceCodeInfo_Location)
-	if sourceInfo == nil {
-		return locationMap
-	}
-
-	for _, loc := range sourceInfo.GetLocation() {
-		path := pathToString(loc.Path)
-		locationMap[path] = loc
-	}
-	return locationMap
-}
-
 func processMessage(
 	msg *descriptorpb.DescriptorProto,
-	locations map[string]*descriptorpb.SourceCodeInfo_Location,
-	path []int32,
 	fields *types.AnnotatedFields,
 ) error {
 	// Check each field
-	for fieldIdx, field := range msg.Field {
-		// Build path to this field: [4, msgIdx, 2, fieldIdx]
-		fieldPath := append(append([]int32{}, path...), 2, int32(fieldIdx))
+	for _, field := range msg.Field {
+		// Only process repeated message fields
+		if field.GetLabel() != descriptorpb.FieldDescriptorProto_LABEL_REPEATED {
+			continue
+		}
 
-		// Look up source location for this field
-		if loc, ok := locations[pathToString(fieldPath)]; ok {
-			if isFieldAnnotated(loc.GetLeadingComments()) {
-				if field.GetLabel() == descriptorpb.FieldDescriptorProto_LABEL_REPEATED {
-					goFieldName := toGoFieldName(field.GetName())
-					fields.Add(goFieldName)
-				}
-			}
+		// Only process message types (not primitives)
+		if field.GetType() != descriptorpb.FieldDescriptorProto_TYPE_MESSAGE {
+			continue
+		}
+
+		// Check if field should use value slice
+		shouldUse := shouldUseValueSlice(field)
+
+		if shouldUse {
+			goFieldName := toGoFieldName(field.GetName())
+			fields.Add(goFieldName)
 		}
 	}
 	return nil
 }
 
-func isFieldAnnotated(comments string) bool {
-	return strings.Contains(comments, "@nullable=false") ||
-		strings.Contains(comments, "@valueslice")
-}
-
-func pathToString(path []int32) string {
-	strs := make([]string, len(path))
-	for i, p := range path {
-		strs[i] = fmt.Sprintf("%d", p)
+// shouldUseValueSlice determines if a field should use value slices based on protobuf field options
+func shouldUseValueSlice(field *descriptorpb.FieldDescriptorProto) bool {
+	if field.Options == nil {
+		return false
 	}
-	return strings.Join(strs, ".")
+
+	// Check simple value_slice extension
+	if proto.HasExtension(field.Options, protogo_values.E_ValueSlice) {
+		valueSlice := proto.GetExtension(field.Options, protogo_values.E_ValueSlice).(bool)
+		return valueSlice
+	}
+
+	// Check structured field options
+	if proto.HasExtension(field.Options, protogo_values.E_FieldOpts) {
+		opts := proto.GetExtension(field.Options, protogo_values.E_FieldOpts).(*protogo_values.FieldOptions)
+		if opts != nil && opts.ValueSlice != nil {
+			return *opts.ValueSlice
+		}
+	}
+
+	return false
 }
 
 func toGoFieldName(protoName string) string {
