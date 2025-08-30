@@ -82,15 +82,13 @@ type UserList struct {
 ### From Source
 
 ```bash
-# Replace with actual repository URL when published
-go install github.com/YOUR_USERNAME/protogo-values/cmd/protoc-gen-go-values@latest
+go install github.com/benjamin-rood/protogo-values/cmd/protoc-gen-go-values@latest
 ```
 
 ### From Repository
 
 ```bash
-# Replace with actual repository URL
-git clone https://github.com/YOUR_USERNAME/protogo-values.git
+git clone https://github.com/benjamin-rood/protogo-values.git
 cd protogo-values
 make install
 ```
@@ -98,8 +96,7 @@ make install
 ### Manual Build
 
 ```bash
-# Replace with actual repository URL
-git clone https://github.com/YOUR_USERNAME/protogo-values.git
+git clone https://github.com/benjamin-rood/protogo-values.git
 cd protogo-values
 make build
 cp protoc-gen-go-values $GOPATH/bin/  # or somewhere in your PATH
