@@ -84,7 +84,6 @@ func shouldUseValueSlice(field *descriptorpb.FieldDescriptorProto) bool {
 			return *opts.ValueSlice
 		}
 	}
-
 	return false
 }
 

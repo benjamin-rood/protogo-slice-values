@@ -50,18 +50,27 @@ func transformField(content, fieldName string) string {
 		}
 		
 		// Replace field declarations: FieldName []*Type -> FieldName []Type
-		// Handle various whitespace patterns (spaces, tabs)
-		patterns := []string{
-			fieldName + " []*",       // space separator
-			fieldName + "\t[]*",      // tab separator  
-			fieldName + "  []*",      // multiple spaces
-			fieldName + "   []*",     // even more spaces
-		}
-		
-		for _, pattern := range patterns {
-			if strings.Contains(line, pattern) {
-				replacement := strings.Replace(pattern, "[]*", "[]", 1)
-				lines[i] = strings.ReplaceAll(line, pattern, replacement)
+		// Handle any amount of whitespace between field name and slice declaration
+		if strings.Contains(line, fieldName) && strings.Contains(line, "[]*") {
+			// Find the field name and ensure it's followed by whitespace and []*
+			fieldIndex := strings.Index(line, fieldName)
+			if fieldIndex >= 0 {
+				// Look for []*Type after the field name with any whitespace in between
+				remaining := line[fieldIndex+len(fieldName):]
+				if strings.Contains(remaining, "[]*") {
+					// Use regex-like replacement: find the first []*Type pattern after the field name
+					sliceIndex := strings.Index(remaining, "[]*")
+					if sliceIndex >= 0 {
+						// Check if there's only whitespace between field name and []*
+						whitespace := remaining[:sliceIndex]
+						if strings.TrimSpace(whitespace) == "" && len(whitespace) > 0 {
+							// Replace []*Type with []Type
+							beforeSlice := line[:fieldIndex+len(fieldName)+sliceIndex]
+							afterSlice := line[fieldIndex+len(fieldName)+sliceIndex+3:] // +3 for "[]*"
+							lines[i] = beforeSlice + "[]" + afterSlice
+						}
+					}
+				}
 			}
 		}
 		
