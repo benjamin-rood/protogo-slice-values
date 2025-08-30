@@ -14,10 +14,16 @@ Import the protogo_values options in your proto files:
 import "proto/protogo_values/options.proto";
 ```
 
-Then mark fields with the `value_slice` option:
+Then mark fields with the `value_slice` option using one of two supported formats:
 
+**Simple format (recommended for basic usage):**
 ```protobuf
 repeated User users = 1 [(protogo_values.value_slice) = true];
+```
+
+**Structured format (for future extensibility):**
+```protobuf
+repeated User active_users = 2 [(protogo_values.field_opts).value_slice = true];
 ```
 
 ## Example Usage
@@ -133,11 +139,11 @@ protoc \
 
 ## How It Works
 
-1. The plugin intercepts the protobuf compilation process
-2. Calls the standard `protoc-gen-go` plugin to generate normal Go code
-3. Parses the proto files for fields marked with protobuf field options
-4. Post-processes the generated Go code to convert marked fields from `[]*Type` to `[]Type`
-5. Updates both field declarations and getter methods
+1. **Plugin Protocol**: The plugin follows the standard protoc plugin protocol, reading `CodeGeneratorRequest` from stdin
+2. **Delegation**: Forwards the request to `protoc-gen-go` as a subprocess to generate normal Go code  
+3. **Field Analysis**: Parses proto file descriptors to identify fields marked with `protogo_values` field options
+4. **Code Transformation**: Applies pattern-based string replacements to convert `[]*Type` to `[]Type` for annotated fields
+5. **Response Generation**: Returns the modified `CodeGeneratorResponse` with transformed field declarations and getter methods
 
 ## Benefits
 
@@ -164,9 +170,11 @@ make test-integration
 go test -cover ./internal/...
 ```
 
+**Note**: Integration tests require both `protoc` and `protoc-gen-go` to be installed and available in your PATH. They use the `+build integration` tag and test the complete plugin protocol workflow with real protobuf compilation.
+
 ## Requirements
 
-- Go 1.19+
+- Go 1.24+
 - `protoc-gen-go` must be installed and available in PATH
 - Protocol Buffers compiler (`protoc`)
 
@@ -174,6 +182,14 @@ go test -cover ./internal/...
 
 - Only works with repeated message fields
 - Requires `protoc-gen-go` to be available during compilation
+
+## Development
+
+For developers interested in contributing or understanding the implementation:
+
+- **Specifications**: See `specs/protobuf-field-options/` for detailed requirements in EARS format
+- **Examples**: The `examples/` directory contains working proto files and buf configuration  
+- **Architecture**: Plugin uses a two-phase approach - delegation to `protoc-gen-go` followed by selective post-processing
 
 ## License
 
