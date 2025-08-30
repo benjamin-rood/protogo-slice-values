@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package bug_test;
+
+option go_package = "github.com/benjamin-rood/protogo-values/testdata/gen/bug_test";
+
+message TestResponse {
+  // This field has NO field options - should remain []*TestResult
+  repeated TestResult results = 1;
+}
+
+message TestResult {
+  string name = 1;
+  bool passed = 2;
+}
