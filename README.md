@@ -11,7 +11,7 @@ By default, the Go protobuf generator creates pointer slices (`[]*Type`) for rep
 Import the protogo_values options in your proto files:
 
 ```protobuf
-import "proto/protogo_values/options.proto";
+import "protogo_values/options.proto";
 ```
 
 Then mark fields with the `value_slice` option using one of two supported formats:
@@ -33,7 +33,7 @@ syntax = "proto3";
 
 package example;
 
-import "proto/protogo_values/options.proto";
+import "protogo_values/options.proto";
 
 message User {
   string id = 1;
@@ -82,13 +82,15 @@ type UserList struct {
 ### From Source
 
 ```bash
-go install github.com/benjamin-rood/protogo-values/cmd/protoc-gen-go-values@latest
+# Replace with actual repository URL when published
+go install github.com/YOUR_USERNAME/protogo-values/cmd/protoc-gen-go-values@latest
 ```
 
 ### From Repository
 
 ```bash
-git clone https://github.com/benjamin-rood/protogo-values.git
+# Replace with actual repository URL
+git clone https://github.com/YOUR_USERNAME/protogo-values.git
 cd protogo-values
 make install
 ```
@@ -96,7 +98,8 @@ make install
 ### Manual Build
 
 ```bash
-git clone https://github.com/benjamin-rood/protogo-values.git
+# Replace with actual repository URL
+git clone https://github.com/YOUR_USERNAME/protogo-values.git
 cd protogo-values
 make build
 cp protoc-gen-go-values $GOPATH/bin/  # or somewhere in your PATH
@@ -111,7 +114,7 @@ Create a `buf.gen.yaml` file:
 ```yaml
 version: v1
 plugins:
-  - plugin: go-values
+  - plugin: protoc-gen-go-values
     out: gen
     opt:
       - paths=source_relative
@@ -130,8 +133,8 @@ buf generate
 
 ```bash
 protoc \
-  --go-values_out=. \
-  --go-values_opt=paths=source_relative \
+  --protoc-gen-go-values_out=. \
+  --protoc-gen-go-values_opt=paths=source_relative \
   --go-grpc_out=. \
   --go-grpc_opt=paths=source_relative \
   your_proto_file.proto
@@ -188,7 +191,8 @@ go test -cover ./internal/...
 For developers interested in contributing or understanding the implementation:
 
 - **Specifications**: See `specs/protobuf-field-options/` for detailed requirements in EARS format
-- **Examples**: The `examples/` directory contains working proto files and buf configuration  
+- **Examples**: The `examples/` directory contains working proto files and buf configuration
+- **Validation Demo**: See `../protogo-values-validation-demo/` for comprehensive end-to-end testing with gRPC services and performance benchmarks
 - **Architecture**: Plugin uses a two-phase approach - delegation to `protoc-gen-go` followed by selective post-processing
 
 ## License
